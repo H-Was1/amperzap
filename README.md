@@ -36,8 +36,8 @@
 ### Steps
 1. Clone the repository:
    ```bash
-   git clone https://github.com/H-Was1/AmperZap.git
-   cd AmperZap
+   git clone https://github.com/H-Was1/amperzap.git
+   cd amperzap
    ```
 2. Build the application:
    ```bash
@@ -52,61 +52,11 @@
 
 ## Usage �
 
-### Command-Line Interface
+### Graphical User Interface
+install the from famous package managers
 
-- **Check Battery Status**:
-  ```bash
-  ./amperzap status
-  ```
-  Output:
-  ```
-  Battery Health: 95.00%
-  Battery Charge: 80.00%
-  Charging Status: Discharging
-  ```
 
-- **Set Low Battery Alarm**:
-  ```bash
-  ./amperzap alarm --low 20
-  ```
-  This will notify you when the battery level drops below 20%.
 
-- **Set Full Charge Alarm**:
-  ```bash
-  ./amperzap alarm --full 100
-  ```
-  This will notify you when the battery is fully charged.
-
-- **Monitor Battery Health Over Time**:
-  ```bash
-  ./amperzap health
-  ```
-  Output:
-  ```
-  Battery Health History:
-  - Day 1: 98.00%
-  - Day 2: 97.50%
-  - Day 3: 97.00%
-  ```
-
-### Graphical User Interface (Optional)
-If you have a GUI version of the app, provide instructions on how to launch and use it.
-
----
-
-## Configuration ⚙️
-
-You can customize AmperZap by editing the `config.toml` file. Example configuration:
-
-```toml
-[alarms]
-low_battery = 20
-full_charge = 100
-
-[notifications]
-enable = true
-sound = "beep.mp3"
-```
 
 ---
 

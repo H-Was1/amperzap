@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize)]
 struct BatteryInfo {
     charge: u32,
-    health: Option<f32>,
+    health: Option<u32>,
     status: String,
 }
 
@@ -17,11 +17,29 @@ fn battery_info() -> BatteryInfo {
     })
 }
 
+#[tauri::command]
+fn beep() {
+    println!("Beeping .......");
+    println!("Beep complete.");
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![battery_info])
+        .plugin(tauri_plugin_notification::init())
+        .setup(|app| {
+            use tauri_plugin_notification::NotificationExt;
+            app.notification()
+                .builder()
+                .title("Tauri")
+                .body("Tauri is awesome")
+                .show()
+                .unwrap();
+
+            Ok(())
+        })
+        .invoke_handler(tauri::generate_handler![battery_info, beep])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
@@ -45,7 +63,7 @@ fn get_battery_info() -> Result<BatteryInfo, battery::Error> {
 
         // Access battery health (state of health)
         let health = battery.state_of_health().value * 100.0;
-        battery_info.health = Some(health);
+        battery_info.health = Some(health as u32);
 
         // Access battery charge level (state of charge)
         let charge = battery.state_of_charge().value * 100.0;
