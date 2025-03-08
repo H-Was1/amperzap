@@ -20,6 +20,7 @@ function App() {
     status: "Unknown",
   });
   const [permission, setPermission] = useState(false);
+  const [dispatch, setDispatch] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(async () => {
@@ -40,7 +41,7 @@ function App() {
           setBatteryInfo(battery_info as BatteryInfoProps);
         });
       } catch (error) {
-        console.error("Failed to beep:", error);
+        console.error("Failed to check Battery info:", error);
       }
     }, 1000);
     return () => clearInterval(interval);
@@ -54,12 +55,16 @@ function App() {
     const shouldBeep =
       (batteryInfo.status === "Charging" && batteryInfo.charge >= 75) ||
       (batteryInfo.status === "Discharging" && batteryInfo.charge <= 35);
-
-    if (!shouldBeep) return null;
+    console.log("Should beep?", shouldBeep, batteryInfo);
+    setDispatch(true);
     try {
+      // if (shouldBeep) {
       await invoke("beep");
+      // }
     } catch (error) {
       console.error("Failed to beep:", error);
+    } finally {
+      setDispatch(false);
     }
   }
 
@@ -89,12 +94,13 @@ function App() {
   };
 
   return (
-    <main className={`${permission ? "bg-lime-400" : "bg-red-400"}`}>
+    <main className={`h-screen ${permission ? "bg-lime-500" : "bg-red-400"}`}>
       <h2 className="font-semibold text-3xl">Battery</h2>
       <div>
         <p>Charge: {batteryInfo.charge}</p>
         <p>Health: {batteryInfo.health}</p>
         <p>Status: {batteryInfo.status}</p>
+        <p>Dispatch Status: {`${dispatch}`}</p>
       </div>
       <button
         onClick={handleNotification}
