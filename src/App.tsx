@@ -58,9 +58,9 @@ function App() {
     console.log("Should beep?", shouldBeep, batteryInfo);
     setDispatch(true);
     try {
-      // if (shouldBeep) {
-      await invoke("beep");
-      // }
+      if (shouldBeep) {
+        await invoke("beep");
+      }
     } catch (error) {
       console.error("Failed to beep:", error);
     } finally {
