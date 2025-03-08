@@ -1,5 +1,7 @@
 use battery::{Manager, State};
 use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::BufReader;
 
 #[derive(Serialize, Deserialize)]
 struct BatteryInfo {
@@ -17,10 +19,14 @@ fn battery_info() -> BatteryInfo {
     })
 }
 
-#[tauri::command]
+#[tauri::command(async)]
 fn beep() {
-    println!("Beeping .......");
-    println!("Beep complete.");
+    let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
+    let file = BufReader::new(File::open("sounds/alert_sound.mp3").unwrap());
+    let source = rodio::Decoder::new(file).unwrap();
+    let sink = rodio::Sink::try_new(&stream_handle).unwrap();
+    sink.append(source);
+    sink.sleep_until_end();
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]

@@ -28,16 +28,22 @@ function App() {
       } catch (error) {
         console.error("Failed to beep:", error);
       }
-    }, 10000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    invoke("battery_info").then((battery_info) => {
-      setBatteryInfo(battery_info as BatteryInfoProps);
-    });
-    // Update every minute
+    const interval = setInterval(async () => {
+      try {
+        invoke("battery_info").then((battery_info) => {
+          setBatteryInfo(battery_info as BatteryInfoProps);
+        });
+      } catch (error) {
+        console.error("Failed to beep:", error);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -49,7 +55,7 @@ function App() {
       (batteryInfo.status === "Charging" && batteryInfo.charge >= 75) ||
       (batteryInfo.status === "Discharging" && batteryInfo.charge <= 35);
 
-    if (!shouldBeep) return;
+    if (!shouldBeep) return null;
     try {
       await invoke("beep");
     } catch (error) {
