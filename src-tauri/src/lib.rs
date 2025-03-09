@@ -36,7 +36,7 @@ fn beep() {
         println!("Beeping starts");
 
         let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
-        let file = BufReader::new(File::open("sounds/alert_sound.mp3").unwrap());
+        let file = BufReader::new(File::open("/usr/share/sounds/alert_sound.mp3").unwrap());
         let source = rodio::Decoder::new(file).unwrap();
         let sink = rodio::Sink::try_new(&stream_handle).unwrap();
         sink.append(source);
