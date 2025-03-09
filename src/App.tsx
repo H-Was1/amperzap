@@ -52,15 +52,9 @@ function App() {
   }, []);
 
   async function handleBeep() {
-    const shouldBeep =
-      (batteryInfo.status === "Charging" && batteryInfo.charge >= 75) ||
-      (batteryInfo.status === "Discharging" && batteryInfo.charge <= 35);
-    console.log("Should beep?", shouldBeep, batteryInfo);
     setDispatch(true);
     try {
-      if (shouldBeep) {
-        await invoke("beep");
-      }
+      await invoke("beep");
     } catch (error) {
       console.error("Failed to beep:", error);
     } finally {

@@ -21,13 +21,32 @@ fn battery_info() -> BatteryInfo {
 
 #[tauri::command(async)]
 fn beep() {
-    // let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
-    // let file = BufReader::new(File::open("sounds/alert_sound.mp3").unwrap());
-    // let source = rodio::Decoder::new(file).unwrap();
-    // let sink = rodio::Sink::try_new(&stream_handle).unwrap();
-    // sink.append(source);
-    // sink.sleep_until_end();
-    println!("Beep --- Beep");
+    let my_battery_info = battery_info();
+
+    let condition = (my_battery_info.charge <= 35
+        && my_battery_info.status.as_str() == "Discharging")
+        || (my_battery_info.charge >= 75 && my_battery_info.status.as_str() == "Charging");
+
+    println!(
+        "Status: {}, Charge: {}, condition: {condition}",
+        my_battery_info.status, my_battery_info.charge,
+    );
+
+    if condition {
+        println!("Beeping starts");
+
+        let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
+        let file = BufReader::new(File::open("sounds/alert_sound.mp3").unwrap());
+        let source = rodio::Decoder::new(file).unwrap();
+        let sink = rodio::Sink::try_new(&stream_handle).unwrap();
+        sink.append(source);
+        sink.sleep_until_end();
+
+        println!("Beep --- Beep");
+    } else {
+        println!("Skipped Beeping");
+        return;
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
