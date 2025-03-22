@@ -33,7 +33,7 @@ const BatteryProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     updateBatteryInfo();
-    const interval = setInterval(updateBatteryInfo, 1300);
+    const interval = setInterval(updateBatteryInfo, 1000);
 
     return () => clearInterval(interval);
   }, []);

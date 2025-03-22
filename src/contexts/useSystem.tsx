@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface SystemInfoProps {
   host: string;
@@ -18,9 +18,11 @@ const SystemContext = createContext<SystemInfoProps>(initialState);
 const SystemProvider = ({ children }: { children: React.ReactNode }) => {
   const [systemInfo, setSystemInfo] = useState<SystemInfoProps>(initialState);
 
-  invoke("get_system_info").then((systemInformation) => {
-    setSystemInfo(systemInformation as SystemInfoProps);
-  });
+  useEffect(() => {
+    invoke("get_system_info").then((systemInformation) => {
+      setSystemInfo(systemInformation as SystemInfoProps);
+    });
+  }, []);
 
   return (
     <SystemContext.Provider value={systemInfo}>

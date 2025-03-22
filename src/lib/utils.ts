@@ -3,6 +3,7 @@ import {
   requestPermission,
   sendNotification,
 } from "@tauri-apps/plugin-notification";
+import { invoke } from "@tauri-apps/api/core";
 
 async function checkPermission() {
   if (!(await isPermissionGranted())) {
@@ -18,9 +19,10 @@ export async function enqueueNotification(title: string, body: string) {
   sendNotification({ title, body });
 }
 
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+export async function handleBeep() {
+  try {
+    await invoke("beep");
+  } catch (error) {
+    console.error("Failed to beep:", error);
+  }
 }

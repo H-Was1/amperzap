@@ -1,14 +1,21 @@
-use battery::{Manager, State};
+use battery::State;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
 use sysinfo::System;
+use tauri::Manager;
 
 #[derive(Serialize, Deserialize)]
 struct BatteryInfo {
     charge: u32,
     health: Option<u32>,
     status: String,
+}
+
+#[derive(Serialize, Deserialize)]
+struct SystemInfo {
+    host: String,
+    os_version: String,
 }
 
 #[tauri::command]
@@ -41,45 +48,47 @@ fn beep() {
 }
 
 #[tauri::command]
-fn get_system_info() -> String {
-    format!(
-        "{:?}@{:?}_{:?}",
-        System::host_name().unwrap(),
-        System::name().unwrap(),
-        System::kernel_version().unwrap(),
-    )
+fn get_system_info() -> SystemInfo {
+    SystemInfo {
+        host: System::host_name().unwrap(),
+        os_version: System::long_os_version().unwrap(),
+    }
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
-        .setup(|app| {
-            #[cfg(desktop)]
-            {
-                use tauri_plugin_autostart::MacosLauncher;
-                use tauri_plugin_autostart::ManagerExt;
-
-                app.handle()
-                    .plugin(tauri_plugin_autostart::init(
-                        MacosLauncher::LaunchAgent,
-                        Some(vec!["--flag1", "--flag2"]),
-                    ))
-                    .unwrap();
-
-                // Get the autostart manager
-                let autostart_manager = app.autolaunch();
-                // Enable autostart
-                let _ = autostart_manager.enable();
-                // Check enable state
-                println!(
-                    "registered for autostart? {}",
-                    autostart_manager.is_enabled().unwrap()
-                );
-                // Disable autostart
-                // let _ = autostart_manager.disable();
-            }
-            Ok(())
-        })
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            let _ = app
+                .get_webview_window("main")
+                .expect("no main window")
+                .set_focus();
+        }))
+        // .setup(|app| {
+        //     #[cfg(desktop)]
+        //     {
+        //         use tauri_plugin_autostart::MacosLauncher;
+        //         use tauri_plugin_autostart::ManagerExt;
+        //         app.handle()
+        //             .plugin(tauri_plugin_autostart::init(
+        //                 MacosLauncher::LaunchAgent,
+        //                 Some(vec!["--flag1", "--flag2"]),
+        //             ))
+        //             .unwrap();
+        //         // Get the autostart manager
+        //         let autostart_manager = app.autolaunch();
+        //         // Enable autostart
+        //         let _ = autostart_manager.enable();
+        //         // Check enable state
+        //         println!(
+        //             "registered for autostart? {}",
+        //             autostart_manager.is_enabled().unwrap()
+        //         );
+        //         // Disable autostart
+        //         // let _ = autostart_manager.disable();
+        //     }
+        //     Ok(())
+        // })
         // .plugin(tauri_plugin_autostart::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_notification::init())
@@ -105,7 +114,7 @@ pub fn run() {
 
 fn get_battery_info() -> Result<BatteryInfo, battery::Error> {
     // Create a battery manager
-    let manager = Manager::new()?;
+    let manager = battery::Manager::new()?;
 
     // Get the list of batteries
     let batteries = manager.batteries()?;
