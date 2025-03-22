@@ -14,10 +14,10 @@
     "windows": [
       {
         "title": "AmperZap",
-        "width": 500,
+        "width": 400,
         "height": 600,
         "theme": "Dark",
-        "dragDropEnabled": false
+        "resizable": false
       }
     ],
     "security": {

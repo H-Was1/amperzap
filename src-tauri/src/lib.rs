@@ -2,6 +2,7 @@ use battery::{Manager, State};
 use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
+use sysinfo::System;
 
 #[derive(Serialize, Deserialize)]
 struct BatteryInfo {
@@ -27,26 +28,26 @@ fn beep() {
         && my_battery_info.status.as_str() == "Discharging")
         || (my_battery_info.charge >= 75 && my_battery_info.status.as_str() == "Charging");
 
-    println!(
-        "Status: {}, Charge: {}, condition: {condition}",
-        my_battery_info.status, my_battery_info.charge,
-    );
-
     if condition {
-        println!("Beeping starts");
-
         let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
         let file = BufReader::new(File::open("/usr/share/sounds/alert_sound.mp3").unwrap());
         let source = rodio::Decoder::new(file).unwrap();
         let sink = rodio::Sink::try_new(&stream_handle).unwrap();
         sink.append(source);
         sink.sleep_until_end();
-
-        println!("Beep --- Beep");
     } else {
-        println!("Skipped Beeping");
         return;
     }
+}
+
+#[tauri::command]
+fn get_system_info() -> String {
+    format!(
+        "{:?}@{:?}_{:?}",
+        System::host_name().unwrap(),
+        System::name().unwrap(),
+        System::kernel_version().unwrap(),
+    )
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -93,7 +94,11 @@ pub fn run() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![battery_info, beep])
+        .invoke_handler(tauri::generate_handler![
+            get_system_info,
+            battery_info,
+            beep,
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
