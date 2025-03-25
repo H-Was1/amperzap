@@ -3,6 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::BufReader;
 use sysinfo::System;
+use tauri::path::BaseDirectory;
 use tauri::Manager;
 
 #[derive(Serialize, Deserialize)]
@@ -53,7 +54,7 @@ fn battery_info() -> BatteryInfo {
 }
 
 #[tauri::command(async)]
-fn beep() {
+fn beep(handle: tauri::AppHandle) {
     let my_battery_info = battery_info();
 
     let condition = (my_battery_info.charge <= 35
@@ -62,7 +63,15 @@ fn beep() {
 
     if condition {
         let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
-        let file = BufReader::new(File::open("/usr/share/sounds/alert_sound.mp3").unwrap());
+        let file = BufReader::new(
+            File::open(
+                handle
+                    .path()
+                    .resolve("assets/alert_sound.mp3", BaseDirectory::Resource)
+                    .unwrap(),
+            )
+            .unwrap(),
+        );
         let source = rodio::Decoder::new(file).unwrap();
         let sink = rodio::Sink::try_new(&stream_handle).unwrap();
         sink.append(source);
@@ -91,12 +100,20 @@ fn get_system_info() -> SystemInfo {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             let _ = app
                 .get_webview_window("main")
                 .expect("no main window")
                 .set_focus();
         }))
+        // .setup(|app| {
+        //     // allowed the given directory
+        //     let scope = app.fs_scope();
+        //     scope.allow_directory("assets", false);
+        //     dbg!(scope.allowed());
+        //     Ok(())
+        // })
         .setup(|app| {
             #[cfg(desktop)]
             {

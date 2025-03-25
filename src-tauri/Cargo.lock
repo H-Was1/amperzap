@@ -3,11 +3,10 @@
 version = 4
 
 [[package]]
-name = "AmperZap"
+name = "Amperzap"
 version = "0.1.0"
 dependencies = [
  "battery",
- "notify-rust",
  "rodio",
  "serde",
  "serde_json",
@@ -15,6 +14,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-autostart",
+ "tauri-plugin-fs",
  "tauri-plugin-notification",
  "tauri-plugin-opener",
  "tauri-plugin-single-instance",
@@ -4498,6 +4498,29 @@ dependencies = [
  "tauri",
  "tauri-plugin",
  "thiserror 2.0.11",
+]
+
+[[package]]
+name = "tauri-plugin-fs"
+version = "2.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1a1edf18000f02903a7c2e5997fb89aca455ecbc0acc15c6535afbb883be223"
+dependencies = [
+ "anyhow",
+ "dunce",
+ "glob",
+ "percent-encoding",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "tauri",
+ "tauri-plugin",
+ "tauri-utils",
+ "thiserror 2.0.11",
+ "toml 0.8.20",
+ "url",
+ "uuid",
 ]
 
 [[package]]

@@ -11,6 +11,10 @@
     "autostart:allow-disable",
     "autostart:allow-is-enabled",
     "autostart:default",
-    "autostart:deny-disable"
+    "autostart:deny-disable",
+    "fs:allow-read-text-file",
+    "fs:allow-resource-read-recursive",
+    "fs:allow-resource-read",
+    "fs:allow-resource-write"
   ]
 }
