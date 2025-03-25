@@ -1,9 +1,19 @@
 import { invoke } from "@tauri-apps/api/core";
 import { createContext, useContext, useEffect, useState } from "react";
 
-interface SystemInfoProps {
+interface BatteryInfoProps {
+  vendor?: string;
+  model?: string;
+  cycle_count?: string;
+  design_energy?: string;
+  serial_number?: string;
+  technology?: string;
+}
+
+export interface SystemInfoProps {
   host: string;
   os_version: string;
+  battery?: BatteryInfoProps;
 }
 
 const initialState: SystemInfoProps = {

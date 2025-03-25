@@ -6,12 +6,26 @@ interface BatteryInfoProps {
   charge: number;
   health: number;
   status: "Unknown" | "Charging" | "Discharging" | "Full" | "Other";
+  voltage: string;
+  temperature?: string;
+  energy: string;
+  full_energy: string;
+  energy_rate: string;
+  time_to_empty: string;
+  time_to_full: string;
 }
 
 const initialState: BatteryInfoProps = {
   status: "Unknown",
   charge: 0,
   health: 100,
+  energy: "0",
+  full_energy: "0",
+  energy_rate: "0",
+  time_to_empty: "0",
+  time_to_full: "0",
+  voltage: "0",
+  temperature: "0",
 };
 
 // Create the context
