@@ -7,7 +7,7 @@ function App() {
   const { batteryInfo } = useBattery();
 
   return (
-    <main className="h-screen bg-cyan-600 select-none cursor-default px-6 py-3">
+    <main className="h-screen bg-cyan-600 cursor-default px-6 py-3">
       <h2 className="font-semibold text-3xl">Battery</h2>
       <div>
         <p>Charge: {batteryInfo.charge}</p>

@@ -50,11 +50,11 @@ pub fn get_battery_info() -> Result<BatteryInfo, battery::Error> {
         battery_info.energy_rate = format!("{:?}", battery.energy_rate());
         battery_info.time_to_empty = match battery.time_to_empty() {
             Some(time) => Some(format!("{:?}", time)),
-            None => Some(String::from("N/A")),
+            _ => Some(String::from("N/A")),
         };
         battery_info.time_to_full = match battery.time_to_full() {
             Some(time) => Some(format!("{:?}", time)),
-            None => Some(String::from("N/A")),
+            _ => Some(String::from("N/A")),
         };
     }
 
