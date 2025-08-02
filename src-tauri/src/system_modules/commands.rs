@@ -45,7 +45,7 @@ pub fn beep(handle: tauri::AppHandle) {
 
     let condition = (my_battery_info.charge <= 35
         && my_battery_info.status.as_str() == "Discharging")
-        || (my_battery_info.charge >= 75 && my_battery_info.status.as_str() == "Charging");
+        || (my_battery_info.charge >= 80 && my_battery_info.status.as_str() == "Charging");
 
     if condition {
         let (_stream, stream_handle) = rodio::OutputStream::try_default().unwrap();
